@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="../buildMultiTargeting/ArdunioIntegration-back.props" />
+</Project>

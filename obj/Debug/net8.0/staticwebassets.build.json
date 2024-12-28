@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "W6IojixwtTE3hW7fIaiQERcxCDTBEiiR5icARBysBNg=",
+  "Source": "ArdunioIntegration-back",
+  "BasePath": "_content/ArdunioIntegration-back",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
