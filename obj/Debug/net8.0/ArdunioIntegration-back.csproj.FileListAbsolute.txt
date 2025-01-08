@@ -31,3 +31,4 @@
 /Users/kutayavci/Desktop/Furkan Tez/ArdunioIntegration-back/obj/Debug/net8.0/ArdunioIntegration-back.pdb
 /Users/kutayavci/Desktop/Furkan Tez/ArdunioIntegration-back/obj/Debug/net8.0/ArdunioIntegration-back.genruntimeconfig.cache
 /Users/kutayavci/Desktop/Furkan Tez/ArdunioIntegration-back/obj/Debug/net8.0/ref/ArdunioIntegration-back.dll
+/Users/kutayavci/Desktop/Furkan Tez/ArdunioIntegration-back/obj/Debug/net8.0/ArdunioIntegration-back.sourcelink.json

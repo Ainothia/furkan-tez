@@ -1,63 +1,45 @@
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using System.Net.WebSockets;
-using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
 var app = builder.Build();
 
-app.UseWebSockets();
-
-app.Map("/ws", async context =>
+// Enable Swagger middleware
+if (app.Environment.IsDevelopment())
 {
-    if (context.WebSockets.IsWebSocketRequest)
+    app.UseSwagger();
+    app.UseSwaggerUI(options =>
     {
-        using var webSocket = await context.WebSockets.AcceptWebSocketAsync();
-        Console.WriteLine("Ardunio WebSocket connected.");
-        
-        await HandleWebSocketConnection(webSocket);
-    }
-    else
-    {
-        context.Response.StatusCode = 400;
-    }
-});
-
-async Task HandleWebSocketConnection(WebSocket webSocket)
-{
-    var buffer = new byte[1024]; // Buffer to store received data
-
-    while (webSocket.State == WebSocketState.Open)
-    {
-        var result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
-
-        if (result.MessageType == WebSocketMessageType.Close)
-        {
-            Console.WriteLine("WebSocket bağlantısı client tarafından kapatıldı");
-            await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closed by client", CancellationToken.None);
-        }
-        else
-        {
-            var message = Encoding.UTF8.GetString(buffer, 0, result.Count);
-            Console.WriteLine($"Received message: {message}");
-
-            await webSocket.SendAsync(
-                Encoding.UTF8.GetBytes($"Server received: {message}"),
-                WebSocketMessageType.Text,
-                true,
-                CancellationToken.None
-            );
-
-            await ProcessReceivedData(message);
-        }
-    }
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+        options.RoutePrefix = string.Empty; // Swagger available at the root
+    });
 }
 
-async Task ProcessReceivedData(string data)
+app.MapPost("/process-data", async context =>
+{
+    using var reader = new StreamReader(context.Request.Body);
+    var requestBody = await reader.ReadToEndAsync();
+    if (string.IsNullOrWhiteSpace(requestBody))
+    {
+        context.Response.StatusCode = 400;
+        await context.Response.WriteAsync("Invalid request: Body cannot be empty.");
+        return;
+    }
+
+    Console.WriteLine($"Received data: {requestBody}");
+    var responseMessage = await ProcessReceivedData(requestBody);
+    context.Response.ContentType = "application/json";
+    await context.Response.WriteAsync($"{{\"response\": \"{responseMessage}\"}}");
+});
+
+async Task<string> ProcessReceivedData(string data)
 {
     Console.WriteLine($"Processing received data: {data}");
-    // Front'a data gönderilecek
+    return $"Processed: {data}";
 }
 
 app.Run();
